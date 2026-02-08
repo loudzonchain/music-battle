@@ -95,7 +95,7 @@
                 <p class="modal-subtitle">Create an account to save your preferences</p>
                 <input type="text" id="signup-username" placeholder="Username" />
                 <input type="email" id="signup-email" placeholder="Email" />
-                <input type="password" id="signup-password" placeholder="Password (min 6 chars)" />
+                <input type="password" id="signup-password" placeholder="Password (4-15 chars)" maxlength="15" />
                 <button class="modal-btn" onclick="signup()">Create Account</button>
                 <p class="modal-switch">Already have an account? <a onclick="showAuthModal('login')">Login</a></p>
                 <p class="error-msg" id="signup-error"></p>

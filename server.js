@@ -161,8 +161,8 @@ app.post('/api/auth/signup', async (req, res) => {
     return res.status(400).json({ error: 'All fields required' });
   }
 
-  if (password.length < 6) {
-    return res.status(400).json({ error: 'Password must be at least 6 characters' });
+  if (password.length < 4 || password.length > 15) {
+    return res.status(400).json({ error: 'Password must be 4-15 characters' });
   }
 
   try {
