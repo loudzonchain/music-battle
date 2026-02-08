@@ -185,24 +185,15 @@ async function loadStats() {
 loadStats();
 
 // ============================================
-// AUTHENTICATION
+// SIMPLE USERNAME (no password needed)
 // ============================================
 
-let currentUser = null;
+let username = localStorage.getItem('musicbattle_username');
 
-async function checkAuth() {
-    try {
-        const response = await fetch(`${API_URL}/auth/me`, { credentials: 'include' });
-        const data = await response.json();
-
-        if (data.user) {
-            currentUser = data.user;
-            showLoggedInView();
-        } else {
-            showLoggedOutView();
-        }
-    } catch (error) {
-        console.error('Auth check failed:', error);
+function checkUsername() {
+    if (username) {
+        showLoggedInView();
+    } else {
         showLoggedOutView();
     }
 }
@@ -210,7 +201,7 @@ async function checkAuth() {
 function showLoggedInView() {
     document.getElementById('logged-out-view').style.display = 'none';
     document.getElementById('logged-in-view').style.display = 'flex';
-    document.getElementById('display-username').textContent = currentUser.username;
+    document.getElementById('display-username').textContent = username;
 }
 
 function showLoggedOutView() {
@@ -218,83 +209,32 @@ function showLoggedOutView() {
     document.getElementById('logged-in-view').style.display = 'none';
 }
 
-function showAuthModal(type) {
-    document.getElementById('auth-modal').style.display = 'flex';
-    document.getElementById('login-form').style.display = type === 'login' ? 'block' : 'none';
-    document.getElementById('signup-form').style.display = type === 'signup' ? 'block' : 'none';
-    document.getElementById('login-error').textContent = '';
-    document.getElementById('signup-error').textContent = '';
+function showUsernameModal() {
+    document.getElementById('username-modal').style.display = 'flex';
+    document.getElementById('username-input').value = '';
+    document.getElementById('username-input').focus();
 }
 
-function hideAuthModal() {
-    document.getElementById('auth-modal').style.display = 'none';
+function hideUsernameModal() {
+    document.getElementById('username-modal').style.display = 'none';
 }
 
-async function login() {
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-password').value;
-
-    try {
-        const response = await fetch(`${API_URL}/auth/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify({ email, password })
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-            currentUser = data.user;
-            showLoggedInView();
-            hideAuthModal();
-        } else {
-            document.getElementById('login-error').textContent = data.error;
-        }
-    } catch (error) {
-        document.getElementById('login-error').textContent = 'Login failed. Try again.';
+function saveUsername() {
+    const input = document.getElementById('username-input').value.trim();
+    if (input.length < 2) {
+        alert('Username must be at least 2 characters');
+        return;
     }
+    username = input;
+    localStorage.setItem('musicbattle_username', username);
+    showLoggedInView();
+    hideUsernameModal();
 }
 
-async function signup() {
-    const username = document.getElementById('signup-username').value;
-    const email = document.getElementById('signup-email').value;
-    const password = document.getElementById('signup-password').value;
-
-    try {
-        const response = await fetch(`${API_URL}/auth/signup`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify({ username, email, password })
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-            currentUser = data.user;
-            showLoggedInView();
-            hideAuthModal();
-        } else {
-            document.getElementById('signup-error').textContent = data.error;
-        }
-    } catch (error) {
-        document.getElementById('signup-error').textContent = 'Signup failed. Try again.';
-    }
+function changeUsername() {
+    showUsernameModal();
+    document.getElementById('username-input').value = username;
 }
 
-async function logout() {
-    try {
-        await fetch(`${API_URL}/auth/logout`, {
-            method: 'POST',
-            credentials: 'include'
-        });
-        currentUser = null;
-        showLoggedOutView();
-    } catch (error) {
-        console.error('Logout failed:', error);
-    }
-}
-
-// Check auth on page load
-checkAuth();
+// Check username on page load
+checkUsername();
