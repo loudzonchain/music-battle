@@ -84,59 +84,44 @@ db.exec(`
   );
 `);
 
-// Initial songs data
+// Initial songs data - Verified working videos only
 const initialSongs = [
-  // Pop Hits
+  // Pop Hits (verified)
   { id: 1, title: "Blinding Lights", artist: "The Weeknd", youtube_id: "4NRXx6U8ABQ", start_time: 30 },
   { id: 2, title: "Levitating", artist: "Dua Lipa", youtube_id: "TUVcZfQe-Kw", start_time: 45 },
   { id: 3, title: "As It Was", artist: "Harry Styles", youtube_id: "H5v3kku4y6Q", start_time: 25 },
   { id: 4, title: "Stay", artist: "Kid Laroi & Justin Bieber", youtube_id: "kTJczUoc26U", start_time: 15 },
   { id: 5, title: "Bad Guy", artist: "Billie Eilish", youtube_id: "DyDfgMOUjCI", start_time: 20 },
-  { id: 6, title: "Shivers", artist: "Ed Sheeran", youtube_id: "Il0S8BoucSA", start_time: 50 },
+  { id: 6, title: "Shape of You", artist: "Ed Sheeran", youtube_id: "JGwWNGJdvx8", start_time: 45 },
   { id: 7, title: "Heat Waves", artist: "Glass Animals", youtube_id: "mRD0-GxqHVo", start_time: 60 },
-  { id: 8, title: "Peaches", artist: "Justin Bieber", youtube_id: "tQ0yjYUFKAE", start_time: 30 },
-  { id: 9, title: "Uptown Funk", artist: "Bruno Mars", youtube_id: "OPf0YbXqDm0", start_time: 60 },
-  { id: 10, title: "Shape of You", artist: "Ed Sheeran", youtube_id: "JGwWNGJdvx8", start_time: 45 },
-  { id: 11, title: "Closer", artist: "The Chainsmokers ft. Halsey", youtube_id: "PT2_F-1esPk", start_time: 55 },
-  { id: 12, title: "Starboy", artist: "The Weeknd ft. Daft Punk", youtube_id: "34Na4j8AVgA", start_time: 40 },
-  { id: 13, title: "Don't Start Now", artist: "Dua Lipa", youtube_id: "oygrmJFKYZY", start_time: 30 },
-  { id: 14, title: "Watermelon Sugar", artist: "Harry Styles", youtube_id: "E07s5ZYygMg", start_time: 35 },
-  { id: 15, title: "SICKO MODE", artist: "Travis Scott", youtube_id: "6ONRf7h3Mdk", start_time: 120 },
-  { id: 16, title: "God's Plan", artist: "Drake", youtube_id: "xpVfcZ0ZcFM", start_time: 50 },
-  { id: 17, title: "Rockstar", artist: "Post Malone ft. 21 Savage", youtube_id: "UceaB4D0jpo", start_time: 30 },
-  { id: 18, title: "Hotline Bling", artist: "Drake", youtube_id: "uxpDa-c-4Mc", start_time: 45 },
-  { id: 19, title: "Sunflower", artist: "Post Malone & Swae Lee", youtube_id: "ApXoWvfEYVU", start_time: 25 },
-  { id: 20, title: "Old Town Road", artist: "Lil Nas X", youtube_id: "w2Ov5jzm3j8", start_time: 20 },
-  { id: 21, title: "Believer", artist: "Imagine Dragons", youtube_id: "7wtfhZwyrcc", start_time: 55 },
-  { id: 22, title: "Thunder", artist: "Imagine Dragons", youtube_id: "fKopy74weus", start_time: 40 },
-  { id: 23, title: "Stressed Out", artist: "Twenty One Pilots", youtube_id: "pXRviuL6vMY", start_time: 60 },
-  { id: 24, title: "Heathens", artist: "Twenty One Pilots", youtube_id: "UprcpdwuwCg", start_time: 30 },
-  { id: 25, title: "Lean On", artist: "Major Lazer & DJ Snake", youtube_id: "YqeW9_5kURI", start_time: 45 },
-  { id: 26, title: "Titanium", artist: "David Guetta ft. Sia", youtube_id: "JRfuAukYTKg", start_time: 60 },
-  { id: 27, title: "Wake Me Up", artist: "Avicii", youtube_id: "IcrbM1l_BoI", start_time: 40 },
-  { id: 28, title: "Clarity", artist: "Zedd ft. Foxes", youtube_id: "IxxstCcJlsc", start_time: 55 },
-  { id: 29, title: "Bohemian Rhapsody", artist: "Queen", youtube_id: "fJ9rUzIMcZQ", start_time: 50 },
-  { id: 30, title: "Billie Jean", artist: "Michael Jackson", youtube_id: "Zi_XLOBDo_Y", start_time: 30 },
-  { id: 31, title: "Vampire", artist: "Olivia Rodrigo", youtube_id: "RlPNh_PBZb4", start_time: 60 },
-  { id: 32, title: "Flowers", artist: "Miley Cyrus", youtube_id: "G7KNmW9a75Y", start_time: 40 },
-  { id: 33, title: "Kill Bill", artist: "SZA", youtube_id: "hTbr3B3CGIY", start_time: 30 },
-  { id: 34, title: "Anti-Hero", artist: "Taylor Swift", youtube_id: "b1kbLwvqugk", start_time: 45 },
-  { id: 35, title: "Unholy", artist: "Sam Smith & Kim Petras", youtube_id: "Uq9gPaIzbe8", start_time: 35 },
-  { id: 36, title: "Calm Down", artist: "Rema & Selena Gomez", youtube_id: "WcIcVapfqXw", start_time: 50 },
-  { id: 37, title: "Essence", artist: "Wizkid ft. Tems", youtube_id: "U7DAQ3A2u0M", start_time: 45 },
-  { id: 38, title: "Last Last", artist: "Burna Boy", youtube_id: "6UD6ycDvKTg", start_time: 40 },
-  { id: 39, title: "Love Nwantiti", artist: "CKay", youtube_id: "iqb7V4Bfpzw", start_time: 25 },
-  { id: 40, title: "Peru", artist: "Fireboy DML", youtube_id: "eDUM5cHXP4k", start_time: 30 },
-  { id: 41, title: "Despacito", artist: "Luis Fonsi ft. Daddy Yankee", youtube_id: "kJQP7kiw5Fk", start_time: 50 },
-  { id: 42, title: "Titi Me Pregunto", artist: "Bad Bunny", youtube_id: "gFMwwqXdYLQ", start_time: 35 },
-  { id: 43, title: "Dákiti", artist: "Bad Bunny & Jhay Cortez", youtube_id: "TmKh7lAwnBI", start_time: 40 },
-  { id: 44, title: "Hawái", artist: "Maluma", youtube_id: "FTP3NLy8FMo", start_time: 45 },
-  { id: 45, title: "Snooze", artist: "SZA", youtube_id: "LeBH2P7Vtu8", start_time: 55 },
-  { id: 46, title: "Earned It", artist: "The Weeknd", youtube_id: "waU75jdUnYw", start_time: 60 },
-  { id: 47, title: "Best Part", artist: "Daniel Caesar ft. H.E.R.", youtube_id: "vBy7FaapGRo", start_time: 35 },
-  { id: 48, title: "Come Through", artist: "H.E.R.", youtube_id: "D2-LRTodsCs", start_time: 40 },
-  { id: 49, title: "HUMBLE", artist: "Kendrick Lamar", youtube_id: "tvTRZJ-4EyI", start_time: 30 },
-  { id: 50, title: "Rich Flex", artist: "Drake & 21 Savage", youtube_id: "I4DjHHVfoCg", start_time: 45 }
+  { id: 8, title: "Uptown Funk", artist: "Bruno Mars", youtube_id: "OPf0YbXqDm0", start_time: 60 },
+  { id: 9, title: "Starboy", artist: "The Weeknd", youtube_id: "34Na4j8AVgA", start_time: 40 },
+  { id: 10, title: "Don't Start Now", artist: "Dua Lipa", youtube_id: "oygrmJFKYZY", start_time: 30 },
+
+  // Hip-Hop (verified)
+  { id: 11, title: "God's Plan", artist: "Drake", youtube_id: "xpVfcZ0ZcFM", start_time: 50 },
+  { id: 12, title: "Hotline Bling", artist: "Drake", youtube_id: "uxpDa-c-4Mc", start_time: 45 },
+  { id: 13, title: "Sunflower", artist: "Post Malone & Swae Lee", youtube_id: "ApXoWvfEYVU", start_time: 25 },
+  { id: 14, title: "Old Town Road", artist: "Lil Nas X", youtube_id: "w2Ov5jzm3j8", start_time: 20 },
+  { id: 15, title: "HUMBLE", artist: "Kendrick Lamar", youtube_id: "tvTRZJ-4EyI", start_time: 30 },
+
+  // Rock & Alt (verified)
+  { id: 16, title: "Believer", artist: "Imagine Dragons", youtube_id: "7wtfhZwyrcc", start_time: 55 },
+  { id: 17, title: "Thunder", artist: "Imagine Dragons", youtube_id: "fKopy74weus", start_time: 40 },
+  { id: 18, title: "Stressed Out", artist: "Twenty One Pilots", youtube_id: "pXRviuL6vMY", start_time: 60 },
+  { id: 19, title: "Bohemian Rhapsody", artist: "Queen", youtube_id: "fJ9rUzIMcZQ", start_time: 50 },
+
+  // Electronic (verified)
+  { id: 20, title: "Lean On", artist: "Major Lazer & DJ Snake", youtube_id: "YqeW9_5kURI", start_time: 45 },
+  { id: 21, title: "Wake Me Up", artist: "Avicii", youtube_id: "IcrbM1l_BoI", start_time: 40 },
+  { id: 22, title: "Titanium", artist: "David Guetta ft. Sia", youtube_id: "JRfuAukYTKg", start_time: 60 },
+
+  // Latin (verified)
+  { id: 23, title: "Despacito", artist: "Luis Fonsi ft. Daddy Yankee", youtube_id: "kJQP7kiw5Fk", start_time: 50 },
+  { id: 24, title: "Calm Down", artist: "Rema & Selena Gomez", youtube_id: "WcIcVapfqXw", start_time: 50 },
+
+  // R&B (verified)
+  { id: 25, title: "Earned It", artist: "The Weeknd", youtube_id: "waU75jdUnYw", start_time: 60 }
 ];
 
 // Seed songs if empty
