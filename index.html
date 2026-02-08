@@ -8,6 +8,18 @@
 </head>
 <body>
     <div class="container">
+        <!-- User bar -->
+        <div class="user-bar" id="user-bar">
+            <div id="logged-out-view">
+                <button class="auth-btn" onclick="showAuthModal('login')">Login</button>
+                <button class="auth-btn primary" onclick="showAuthModal('signup')">Sign Up</button>
+            </div>
+            <div id="logged-in-view" style="display: none;">
+                <span class="username">Welcome, <strong id="display-username"></strong></span>
+                <button class="auth-btn" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
         <!-- Header -->
         <header>
             <h1>Music Battle</h1>
@@ -60,6 +72,34 @@
         <div class="score-display">
             <p>Battles completed: <span id="battle-count">0</span></p>
             <a href="leaderboard.html" class="leaderboard-link">View Leaderboard</a>
+        </div>
+    </div>
+
+    <!-- Auth Modal -->
+    <div class="modal-overlay" id="auth-modal" style="display: none;">
+        <div class="modal">
+            <button class="modal-close" onclick="hideAuthModal()">&times;</button>
+
+            <div id="login-form">
+                <h2>Welcome Back</h2>
+                <p class="modal-subtitle">Login to track your music taste</p>
+                <input type="email" id="login-email" placeholder="Email" />
+                <input type="password" id="login-password" placeholder="Password" />
+                <button class="modal-btn" onclick="login()">Login</button>
+                <p class="modal-switch">Don't have an account? <a onclick="showAuthModal('signup')">Sign up</a></p>
+                <p class="error-msg" id="login-error"></p>
+            </div>
+
+            <div id="signup-form" style="display: none;">
+                <h2>Join the Battle</h2>
+                <p class="modal-subtitle">Create an account to save your preferences</p>
+                <input type="text" id="signup-username" placeholder="Username" />
+                <input type="email" id="signup-email" placeholder="Email" />
+                <input type="password" id="signup-password" placeholder="Password (min 6 chars)" />
+                <button class="modal-btn" onclick="signup()">Create Account</button>
+                <p class="modal-switch">Already have an account? <a onclick="showAuthModal('login')">Login</a></p>
+                <p class="error-msg" id="signup-error"></p>
+            </div>
         </div>
     </div>
 

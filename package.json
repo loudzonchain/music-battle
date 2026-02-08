@@ -12,9 +12,12 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "better-sqlite3": "^12.6.2",
     "cors": "^2.8.6",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "localtunnel": "^2.0.2"

@@ -112,6 +112,7 @@ function stopBoth() {
 async function vote(side) {
     const winner = currentBattle[side];
     const loser = currentBattle[side === 'left' ? 'right' : 'left'];
+    const loserSide = side === 'left' ? 'right' : 'left';
 
     try {
         // Send vote to backend
@@ -129,18 +130,28 @@ async function vote(side) {
         const result = await response.json();
         console.log(result.message, `(${result.newVoteCount} total votes)`);
 
-        // Update counter
+        // Update counter with animation
         battlesCompleted++;
-        document.getElementById('battle-count').textContent = battlesCompleted;
+        const counter = document.getElementById('battle-count');
+        counter.style.transform = 'scale(1.3)';
+        counter.textContent = battlesCompleted;
+        setTimeout(() => counter.style.transform = 'scale(1)', 200);
 
-        // Visual feedback
-        const card = document.getElementById(`song-${side}`);
-        card.classList.add('voted');
-        setTimeout(() => card.classList.remove('voted'), 300);
+        // Winner celebration effect
+        const winnerCard = document.getElementById(`song-${side}`);
+        const loserCard = document.getElementById(`song-${loserSide}`);
 
-        // Load next battle
+        winnerCard.classList.add('winner');
+        loserCard.style.opacity = '0.5';
+
+        setTimeout(() => {
+            winnerCard.classList.remove('winner');
+            loserCard.style.opacity = '1';
+        }, 600);
+
+        // Stop videos and load next battle
         stopBoth();
-        setTimeout(loadNextBattle, 800);
+        setTimeout(loadNextBattle, 1000);
 
     } catch (error) {
         console.error('Failed to submit vote:', error);
@@ -172,3 +183,118 @@ async function loadStats() {
 
 // Load stats when page loads
 loadStats();
+
+// ============================================
+// AUTHENTICATION
+// ============================================
+
+let currentUser = null;
+
+async function checkAuth() {
+    try {
+        const response = await fetch(`${API_URL}/auth/me`, { credentials: 'include' });
+        const data = await response.json();
+
+        if (data.user) {
+            currentUser = data.user;
+            showLoggedInView();
+        } else {
+            showLoggedOutView();
+        }
+    } catch (error) {
+        console.error('Auth check failed:', error);
+        showLoggedOutView();
+    }
+}
+
+function showLoggedInView() {
+    document.getElementById('logged-out-view').style.display = 'none';
+    document.getElementById('logged-in-view').style.display = 'flex';
+    document.getElementById('display-username').textContent = currentUser.username;
+}
+
+function showLoggedOutView() {
+    document.getElementById('logged-out-view').style.display = 'flex';
+    document.getElementById('logged-in-view').style.display = 'none';
+}
+
+function showAuthModal(type) {
+    document.getElementById('auth-modal').style.display = 'flex';
+    document.getElementById('login-form').style.display = type === 'login' ? 'block' : 'none';
+    document.getElementById('signup-form').style.display = type === 'signup' ? 'block' : 'none';
+    document.getElementById('login-error').textContent = '';
+    document.getElementById('signup-error').textContent = '';
+}
+
+function hideAuthModal() {
+    document.getElementById('auth-modal').style.display = 'none';
+}
+
+async function login() {
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+
+    try {
+        const response = await fetch(`${API_URL}/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            currentUser = data.user;
+            showLoggedInView();
+            hideAuthModal();
+        } else {
+            document.getElementById('login-error').textContent = data.error;
+        }
+    } catch (error) {
+        document.getElementById('login-error').textContent = 'Login failed. Try again.';
+    }
+}
+
+async function signup() {
+    const username = document.getElementById('signup-username').value;
+    const email = document.getElementById('signup-email').value;
+    const password = document.getElementById('signup-password').value;
+
+    try {
+        const response = await fetch(`${API_URL}/auth/signup`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ username, email, password })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            currentUser = data.user;
+            showLoggedInView();
+            hideAuthModal();
+        } else {
+            document.getElementById('signup-error').textContent = data.error;
+        }
+    } catch (error) {
+        document.getElementById('signup-error').textContent = 'Signup failed. Try again.';
+    }
+}
+
+async function logout() {
+    try {
+        await fetch(`${API_URL}/auth/logout`, {
+            method: 'POST',
+            credentials: 'include'
+        });
+        currentUser = null;
+        showLoggedOutView();
+    } catch (error) {
+        console.error('Logout failed:', error);
+    }
+}
+
+// Check auth on page load
+checkAuth();

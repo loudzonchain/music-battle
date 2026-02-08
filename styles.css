@@ -1,5 +1,5 @@
 /*
-  STYLES.CSS - Music Battle (Improved UI)
+  STYLES.CSS - Music Battle (Polished UI)
 */
 
 * {
@@ -13,6 +13,23 @@ body {
     background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
     min-height: 100vh;
     color: #ffffff;
+    overflow-x: hidden;
+}
+
+/* Animated background particles */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+        radial-gradient(circle at 20% 80%, rgba(255, 107, 107, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(102, 126, 234, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(254, 202, 87, 0.05) 0%, transparent 40%);
+    pointer-events: none;
+    z-index: -1;
 }
 
 .container {
@@ -256,6 +273,68 @@ header h1 {
     box-shadow: 0 0 40px rgba(255, 107, 107, 0.4);
 }
 
+/* Card entrance animation */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.song-card {
+    animation: slideUp 0.5s ease forwards;
+}
+
+#song-left {
+    animation-delay: 0.1s;
+}
+
+#song-right {
+    animation-delay: 0.2s;
+}
+
+/* Loading state */
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top-color: #feca57;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 50px auto;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Winner celebration effect */
+@keyframes celebrate {
+    0% { transform: scale(1); box-shadow: 0 0 0 rgba(254, 202, 87, 0); }
+    50% { transform: scale(1.02); box-shadow: 0 0 60px rgba(254, 202, 87, 0.6); }
+    100% { transform: scale(1); box-shadow: 0 0 0 rgba(254, 202, 87, 0); }
+}
+
+.winner {
+    animation: celebrate 0.6s ease;
+    border-color: #feca57 !important;
+}
+
+/* Floating music notes (decorative) */
+@keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(5deg); }
+}
+
+/* Smooth transitions for everything */
+* {
+    transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
 /* ==========================================
    RESPONSIVE - Mobile optimized
    ========================================== */
@@ -343,5 +422,189 @@ header h1 {
 
     .song-card {
         padding: 14px;
+    }
+}
+
+/* ==========================================
+   USER BAR & AUTH
+   ========================================== */
+
+.user-bar {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.auth-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+}
+
+.auth-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.auth-btn.primary {
+    background: linear-gradient(135deg, #ff6b6b, #feca57);
+    border: none;
+    color: #1a1a2e;
+    font-weight: 600;
+}
+
+.auth-btn.primary:hover {
+    transform: scale(1.05);
+}
+
+.username {
+    color: #aaa;
+    font-size: 0.9rem;
+    margin-right: 10px;
+}
+
+.username strong {
+    color: #feca57;
+}
+
+/* Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal {
+    background: linear-gradient(145deg, #1a1a2e, #16213e);
+    border-radius: 24px;
+    padding: 40px;
+    width: 90%;
+    max-width: 400px;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    animation: slideUp 0.3s ease;
+}
+
+.modal-close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.modal-close:hover {
+    color: #fff;
+}
+
+.modal h2 {
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, #ff6b6b, #feca57);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.modal-subtitle {
+    color: #888;
+    margin-bottom: 25px;
+}
+
+.modal input {
+    width: 100%;
+    padding: 14px 18px;
+    margin-bottom: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+}
+
+.modal input:focus {
+    outline: none;
+    border-color: #feca57;
+}
+
+.modal input::placeholder {
+    color: #666;
+}
+
+.modal-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #ff6b6b, #feca57);
+    border: none;
+    border-radius: 12px;
+    color: #1a1a2e;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.modal-btn:hover {
+    transform: scale(1.02);
+    box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
+}
+
+.modal-switch {
+    text-align: center;
+    margin-top: 20px;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.modal-switch a {
+    color: #feca57;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.modal-switch a:hover {
+    text-decoration: underline;
+}
+
+.error-msg {
+    color: #ff6b6b;
+    text-align: center;
+    margin-top: 15px;
+    font-size: 0.9rem;
+}
+
+/* Mobile auth */
+@media (max-width: 500px) {
+    .user-bar {
+        position: relative;
+        top: 0;
+        right: 0;
+        justify-content: center;
+        margin-bottom: 10px;
+    }
+
+    .modal {
+        padding: 30px 20px;
     }
 }
