@@ -1,0 +1,4 @@
+node_modules/
+musicbattle.db
+.DS_Store
+*.log

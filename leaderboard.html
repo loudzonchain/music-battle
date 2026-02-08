@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard - Music Battle</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Leaderboard specific styles */
+        .leaderboard-container {
+            width: 100%;
+            max-width: 600px;
+            margin-top: 20px;
+        }
+
+        .leaderboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .back-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .back-btn:hover {
+            border-color: #feca57;
+            color: #feca57;
+        }
+
+        .song-row {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .song-row:hover {
+            transform: translateX(5px);
+        }
+
+        .rank {
+            font-size: 1.5rem;
+            font-weight: 800;
+            width: 50px;
+            text-align: center;
+        }
+
+        .rank-1 { color: #ffd700; }
+        .rank-2 { color: #c0c0c0; }
+        .rank-3 { color: #cd7f32; }
+        .rank-other { color: #666; }
+
+        .song-details {
+            flex: 1;
+            margin-left: 15px;
+        }
+
+        .song-details h3 {
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+
+        .song-details p {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .vote-count {
+            text-align: right;
+        }
+
+        .vote-count .number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #feca57;
+        }
+
+        .vote-count .label {
+            font-size: 0.75rem;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        .total-stats {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+        }
+
+        .total-stats .big-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #feca57;
+        }
+
+        .total-stats .label {
+            color: #888;
+        }
+
+        .loading {
+            text-align: center;
+            color: #888;
+            padding: 40px;
+        }
+
+        .crown {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Leaderboard</h1>
+            <p class="tagline">Top voted songs</p>
+        </header>
+
+        <div class="leaderboard-container">
+            <div class="leaderboard-header">
+                <a href="index.html" class="back-btn">Back to Battle</a>
+                <button onclick="loadLeaderboard()" class="back-btn">Refresh</button>
+            </div>
+
+            <div id="leaderboard-list">
+                <div class="loading">Loading...</div>
+            </div>
+
+            <div class="total-stats" id="total-stats">
+                <div class="big-number" id="total-battles">-</div>
+                <div class="label">Total Battles</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+
+        async function loadLeaderboard() {
+            try {
+                // Fetch leaderboard data
+                const response = await fetch(`${API_URL}/leaderboard`);
+                const songs = await response.json();
+
+                // Fetch stats
+                const statsResponse = await fetch(`${API_URL}/stats`);
+                const stats = await statsResponse.json();
+
+                // Render leaderboard
+                const container = document.getElementById('leaderboard-list');
+                container.innerHTML = songs.map((song, index) => `
+                    <div class="song-row">
+                        <div class="rank rank-${index < 3 ? index + 1 : 'other'}">
+                            ${index === 0 ? '<span class="crown">👑</span>' : ''}#${song.rank}
+                        </div>
+                        <div class="song-details">
+                            <h3>${song.title}</h3>
+                            <p>${song.artist}</p>
+                        </div>
+                        <div class="vote-count">
+                            <div class="number">${song.votes}</div>
+                            <div class="label">votes</div>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Update total stats
+                document.getElementById('total-battles').textContent = stats.totalBattles;
+
+            } catch (error) {
+                console.error('Failed to load leaderboard:', error);
+                document.getElementById('leaderboard-list').innerHTML =
+                    '<div class="loading">Failed to load. Is the server running?</div>';
+            }
+        }
+
+        // Load on page load
+        loadLeaderboard();
+    </script>
+</body>
+</html>

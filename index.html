@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Battle</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>Music Battle</h1>
+            <p class="tagline">Pick your favorite. Discover new music.</p>
+        </header>
+
+        <!-- Battle arena -->
+        <div class="battle-arena">
+            <!-- Left song -->
+            <div class="song-card" id="song-left">
+                <div class="video-container">
+                    <div id="player-left"></div>
+                </div>
+                <div class="song-info">
+                    <h2 class="song-title">Loading...</h2>
+                    <p class="artist-name"></p>
+                </div>
+                <button class="vote-btn" onclick="vote('left')">
+                    This One Wins
+                </button>
+            </div>
+
+            <!-- VS divider -->
+            <div class="vs-divider">
+                <span>VS</span>
+            </div>
+
+            <!-- Right song -->
+            <div class="song-card" id="song-right">
+                <div class="video-container">
+                    <div id="player-right"></div>
+                </div>
+                <div class="song-info">
+                    <h2 class="song-title">Loading...</h2>
+                    <p class="artist-name"></p>
+                </div>
+                <button class="vote-btn" onclick="vote('right')">
+                    This One Wins
+                </button>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="play-btn" onclick="playBoth()">Play Both</button>
+            <button class="skip-btn" onclick="skip()">Skip Battle</button>
+        </div>
+
+        <!-- Stats -->
+        <div class="score-display">
+            <p>Battles completed: <span id="battle-count">0</span></p>
+            <a href="leaderboard.html" class="leaderboard-link">View Leaderboard</a>
+        </div>
+    </div>
+
+    <!-- YouTube IFrame API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="script.js"></script>
+</body>
+</html>

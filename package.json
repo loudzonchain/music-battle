@@ -1,0 +1,22 @@
+{
+  "name": "music-battle",
+  "version": "1.0.0",
+  "description": "Music voting battle app - pick your favorite songs!",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "better-sqlite3": "^12.6.2",
+    "cors": "^2.8.6",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "localtunnel": "^2.0.2"
+  }
+}
