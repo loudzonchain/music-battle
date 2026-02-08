@@ -124,13 +124,15 @@ const initialSongs = [
   { id: 25, title: "Earned It", artist: "The Weeknd", youtube_id: "waU75jdUnYw", start_time: 60 }
 ];
 
-// Force refresh songs to 25 clean videos
-db.exec('DELETE FROM songs');
-const insert = db.prepare('INSERT INTO songs (id, title, artist, youtube_id, start_time, votes) VALUES (?, ?, ?, ?, ?, 0)');
-initialSongs.forEach(song => {
-  insert.run(song.id, song.title, song.artist, song.youtube_id, song.start_time);
-});
-console.log('Database refreshed with 25 verified songs!');
+// Seed songs if database is empty
+const songCount = db.prepare('SELECT COUNT(*) as count FROM songs').get();
+if (songCount.count === 0) {
+  const insert = db.prepare('INSERT INTO songs (id, title, artist, youtube_id, start_time, votes) VALUES (?, ?, ?, ?, ?, 0)');
+  initialSongs.forEach(song => {
+    insert.run(song.id, song.title, song.artist, song.youtube_id, song.start_time);
+  });
+  console.log('Database seeded with 25 songs!');
+}
 
 // ============================================
 // AUTH ROUTES
