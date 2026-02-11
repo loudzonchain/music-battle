@@ -15,8 +15,10 @@
     "bcryptjs": "^3.0.3",
     "better-sqlite3": "^12.6.2",
     "cors": "^2.8.6",
+    "dotenv": "^17.2.4",
     "express": "^5.2.1",
     "express-session": "^1.19.0",
+    "googleapis": "^171.4.0",
     "uuid": "^13.0.0"
   },
   "devDependencies": {

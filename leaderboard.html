@@ -4,182 +4,117 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leaderboard - Music Battle</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <style>
-        /* Leaderboard specific styles */
-        .leaderboard-container {
-            width: 100%;
-            max-width: 600px;
-            margin-top: 20px;
-        }
-
-        .leaderboard-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .back-btn {
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #fff;
-            padding: 10px 20px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            text-decoration: none;
-            transition: all 0.2s ease;
-        }
-
-        .back-btn:hover {
-            border-color: #feca57;
-            color: #feca57;
-        }
-
-        .song-row {
-            display: flex;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 16px 20px;
-            margin-bottom: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: transform 0.2s ease;
-        }
-
-        .song-row:hover {
-            transform: translateX(5px);
-        }
-
-        .rank {
-            font-size: 1.5rem;
-            font-weight: 800;
-            width: 50px;
-            text-align: center;
-        }
-
-        .rank-1 { color: #ffd700; }
-        .rank-2 { color: #c0c0c0; }
-        .rank-3 { color: #cd7f32; }
-        .rank-other { color: #666; }
-
-        .song-details {
-            flex: 1;
-            margin-left: 15px;
-        }
-
-        .song-details h3 {
-            font-size: 1.1rem;
-            margin-bottom: 4px;
-        }
-
-        .song-details p {
-            color: #888;
-            font-size: 0.9rem;
-        }
-
-        .vote-count {
-            text-align: right;
-        }
-
-        .vote-count .number {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #feca57;
-        }
-
-        .vote-count .label {
-            font-size: 0.75rem;
-            color: #666;
-            text-transform: uppercase;
-        }
-
-        .total-stats {
-            text-align: center;
-            margin-top: 30px;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 12px;
-        }
-
-        .total-stats .big-number {
-            font-size: 3rem;
-            font-weight: 800;
-            color: #feca57;
-        }
-
-        .total-stats .label {
-            color: #888;
-        }
-
-        .loading {
-            text-align: center;
-            color: #888;
-            padding: 40px;
-        }
-
-        .crown {
-            margin-right: 8px;
-        }
-    </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Leaderboard</h1>
-            <p class="tagline">Top voted songs</p>
-        </header>
+    <!-- Matrix background layers -->
+    <canvas class="matrix-rain" id="matrix-rain"></canvas>
+    <div class="scan-lines"></div>
 
-        <div class="leaderboard-container">
-            <div class="leaderboard-header">
-                <a href="index.html" class="back-btn">Back to Battle</a>
-                <button onclick="loadLeaderboard()" class="back-btn">Refresh</button>
+    <div class="window">
+        <!-- Title bar with traffic lights -->
+        <div class="title-bar">
+            <div class="traffic-lights">
+                <div class="traffic-light red"></div>
+                <div class="traffic-light yellow"></div>
+                <div class="traffic-light green"></div>
             </div>
+            <div class="title-bar-text">Leaderboard - Music Battle</div>
+        </div>
 
-            <div id="leaderboard-list">
-                <div class="loading">Loading...</div>
+        <!-- Menu bar -->
+        <div class="menu-bar">
+            <div class="menu-item">
+                File
+                <div class="menu-dropdown">
+                    <a href="index.html">Back to Battle</a>
+                    <a href="playlist.html">My Playlist</a>
+                    <div class="menu-divider"></div>
+                    <span onclick="loadLeaderboard()">Refresh</span>
+                </div>
             </div>
+            <div class="menu-item">
+                View
+                <div class="menu-dropdown">
+                    <span onclick="loadLeaderboard()">Refresh Rankings</span>
+                </div>
+            </div>
+            <div class="menu-item">
+                Help
+                <div class="menu-dropdown">
+                    <span>Top voted songs</span>
+                    <div class="menu-divider"></div>
+                    <span>v1.0</span>
+                </div>
+            </div>
+        </div>
 
-            <div class="total-stats" id="total-stats">
-                <div class="big-number" id="total-battles">-</div>
-                <div class="label">Total Battles</div>
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <button class="toolbar-btn" onclick="window.location.href='index.html'">&#9876; Battle</button>
+            <button class="toolbar-btn" onclick="loadLeaderboard()">&#8634; Refresh</button>
+        </div>
+
+        <!-- Window body -->
+        <div class="window-body">
+            <div class="leaderboard-container">
+                <div class="leaderboard-header">
+                    <a href="index.html" class="back-btn">&larr; Back to Battle</a>
+                    <button onclick="loadLeaderboard()" class="back-btn">Refresh</button>
+                </div>
+
+                <div id="leaderboard-list">
+                    <div class="loading">Loading...</div>
+                </div>
+
+                <div class="total-stats" id="total-stats">
+                    <div class="big-number" id="total-battles">-</div>
+                    <div class="label">Total Battles</div>
+                </div>
             </div>
+        </div>
+
+        <!-- Status bar -->
+        <div class="status-bar">
+            <span>Music Battle Leaderboard</span>
+            <a href="index.html">Back to Battle &rarr;</a>
         </div>
     </div>
 
     <script>
-        const API_URL = 'http://localhost:3000/api';
+        const API_URL = window.location.origin + '/api';
 
         async function loadLeaderboard() {
             try {
-                // Fetch leaderboard data
                 const response = await fetch(`${API_URL}/leaderboard`);
                 const songs = await response.json();
 
-                // Fetch stats
                 const statsResponse = await fetch(`${API_URL}/stats`);
                 const stats = await statsResponse.json();
 
-                // Render leaderboard
                 const container = document.getElementById('leaderboard-list');
                 container.innerHTML = songs.map((song, index) => `
                     <div class="song-row">
                         <div class="rank rank-${index < 3 ? index + 1 : 'other'}">
-                            ${index === 0 ? '<span class="crown">👑</span>' : ''}#${song.rank}
+                            ${index === 0 ? '<span class="crown">&#9733;</span>' : ''}#${song.rank}
                         </div>
                         <div class="song-details">
                             <h3>${song.title}</h3>
-                            <p>${song.artist}</p>
+                            <p>${song.artist} <span class="genre-tag">${song.genre || ''}</span></p>
                         </div>
-                        <div class="vote-count">
-                            <div class="number">${song.votes}</div>
-                            <div class="label">votes</div>
+                        <div class="song-stats">
+                            <div class="elo-rating">${song.global_elo}</div>
+                            <div class="win-loss">${song.total_wins}W - ${song.total_battles - song.total_wins}L</div>
+                        </div>
+                        <div class="elo-delta ${song.elo_delta > 0 ? 'up' : song.elo_delta < 0 ? 'down' : 'neutral'}">
+                            ${song.elo_delta > 0 ? '&#9650;' : song.elo_delta < 0 ? '&#9660;' : '&ndash;'} ${Math.abs(song.elo_delta)}
                         </div>
                     </div>
                 `).join('');
 
-                // Update total stats
                 document.getElementById('total-battles').textContent = stats.totalBattles;
 
             } catch (error) {
@@ -189,8 +124,90 @@
             }
         }
 
-        // Load on page load
         loadLeaderboard();
+    </script>
+
+    <!-- Matrix digital rain (fewer streams for readability) -->
+    <script>
+    (function() {
+        const canvas = document.getElementById('matrix-rain');
+        const ctx = canvas.getContext('2d');
+
+        const chars = '\u266a\u266b\u266c\u26690011\u266a\u266b01\u266c10\u2669';
+        const charArray = chars.split('');
+
+        let streams = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initStreams();
+        }
+
+        function initStreams() {
+            const isMobile = window.innerWidth < 768;
+            const streamCount = isMobile ? 5 : 8;  // Fewer streams for leaderboard
+            streams = [];
+
+            for (let i = 0; i < streamCount; i++) {
+                streams.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height * -1,
+                    speed: 0.3 + Math.random() * 0.5,
+                    chars: [],
+                    length: 8 + Math.floor(Math.random() * 12),
+                    opacity: 0.06 + Math.random() * 0.08  // Slightly more subtle
+                });
+
+                for (let j = 0; j < streams[i].length; j++) {
+                    streams[i].chars.push(charArray[Math.floor(Math.random() * charArray.length)]);
+                }
+            }
+        }
+
+        function draw() {
+            ctx.fillStyle = 'rgba(10, 10, 10, 0.15)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.font = '14px "IBM Plex Mono", monospace';
+
+            streams.forEach(function(stream) {
+                for (let i = 0; i < stream.chars.length; i++) {
+                    const y = stream.y + i * 22;
+
+                    if (i === stream.chars.length - 1) {
+                        ctx.fillStyle = 'rgba(0, 255, 159, ' + Math.min(stream.opacity * 2.5, 0.4) + ')';
+                    } else {
+                        const fade = 1 - (i / stream.chars.length);
+                        ctx.fillStyle = 'rgba(0, 255, 159, ' + (stream.opacity * fade) + ')';
+                    }
+
+                    ctx.fillText(stream.chars[i], stream.x, y);
+
+                    if (Math.random() < 0.02) {
+                        stream.chars[i] = charArray[Math.floor(Math.random() * charArray.length)];
+                    }
+                }
+
+                stream.y += stream.speed;
+
+                if (stream.y > canvas.height + 100) {
+                    stream.y = -stream.length * 22;
+                    stream.x = Math.random() * canvas.width;
+                    stream.speed = 0.3 + Math.random() * 0.5;
+                }
+            });
+
+            requestAnimationFrame(draw);
+        }
+
+        const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+        if (!prefersReduced.matches) {
+            resize();
+            window.addEventListener('resize', resize);
+            draw();
+        }
+    })();
     </script>
 </body>
 </html>

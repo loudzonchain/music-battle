@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Playlist - Music Battle</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Matrix background layers -->
+    <canvas class="matrix-rain" id="matrix-rain"></canvas>
+    <div class="scan-lines"></div>
+
+    <div class="window">
+        <!-- Title bar with traffic lights -->
+        <div class="title-bar">
+            <div class="traffic-lights">
+                <div class="traffic-light red"></div>
+                <div class="traffic-light yellow"></div>
+                <div class="traffic-light green"></div>
+            </div>
+            <div class="title-bar-text">My Playlist - Music Battle</div>
+        </div>
+
+        <!-- Menu bar -->
+        <div class="menu-bar">
+            <div class="menu-item">
+                File
+                <div class="menu-dropdown">
+                    <a href="index.html">Back to Battle</a>
+                    <a href="leaderboard.html">Leaderboard</a>
+                    <div class="menu-divider"></div>
+                    <span onclick="loadPlaylist()">Refresh</span>
+                </div>
+            </div>
+            <div class="menu-item">
+                View
+                <div class="menu-dropdown">
+                    <span onclick="loadPlaylist()">Refresh Playlist</span>
+                </div>
+            </div>
+            <div class="menu-item">
+                Help
+                <div class="menu-dropdown">
+                    <span>Your saved songs</span>
+                    <div class="menu-divider"></div>
+                    <span>v1.0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <button class="toolbar-btn" onclick="window.location.href='index.html'">&#9876; Battle</button>
+            <button class="toolbar-btn" onclick="window.location.href='leaderboard.html'">&#9733; Rankings</button>
+            <button class="toolbar-btn" onclick="loadPlaylist()">&#8634; Refresh</button>
+        </div>
+
+        <!-- Window body -->
+        <div class="window-body">
+            <div class="playlist-container">
+                <div class="playlist-header">
+                    <a href="index.html" class="back-btn">&larr; Back to Battle</a>
+                    <span class="playlist-count" id="playlist-count"></span>
+                </div>
+
+                <!-- YouTube connection status -->
+                <div class="yt-connect-bar" id="yt-connect-bar">
+                    <div id="yt-disconnected" style="display:none;">
+                        <button class="yt-connect-btn" onclick="window.location.href='/auth/youtube'">&#9654; Connect YouTube</button>
+                    </div>
+                    <div id="yt-connected" style="display:none;">
+                        <span class="yt-status">Connected to YouTube &#10003;</span>
+                        <button class="yt-sync-btn" onclick="syncAllToYouTube()">Sync All to YouTube</button>
+                        <button class="yt-disconnect-btn" onclick="disconnectYouTube()">Disconnect</button>
+                    </div>
+                </div>
+
+                <div id="playlist-list">
+                    <div class="loading">Loading...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status bar -->
+        <div class="status-bar">
+            <span>My Playlist</span>
+            <a href="index.html">Back to Battle &rarr;</a>
+        </div>
+    </div>
+
+    <!-- YouTube IFrame API (for inline playback) -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+
+    <script>
+        const API_URL = window.location.origin + '/api';
+        var activePlayer = null;
+        var activePlayerId = null;
+
+        function onYouTubeIframeAPIReady() {
+            console.log('YouTube API Ready on playlist page');
+        }
+
+        async function loadPlaylist() {
+            try {
+                var res = await fetch(API_URL + '/playlist');
+                var songs = await res.json();
+
+                var countEl = document.getElementById('playlist-count');
+                countEl.textContent = songs.length + ' song' + (songs.length !== 1 ? 's' : '') + ' saved';
+
+                var container = document.getElementById('playlist-list');
+
+                if (songs.length === 0) {
+                    container.innerHTML = '<div class="playlist-empty">No songs saved yet.<br>Win some battles and save your favorites!</div>';
+                    return;
+                }
+
+                container.innerHTML = songs.map(function(song) {
+                    var date = new Date(song.added_at);
+                    var dateStr = date.toLocaleDateString();
+                    return '<div class="playlist-row" id="playlist-row-' + song.id + '">' +
+                        '<div class="playlist-thumb" onclick="playInline(' + song.id + ', \'' + song.youtube_id + '\')">' +
+                            '<img src="https://img.youtube.com/vi/' + song.youtube_id + '/default.jpg" alt="' + song.title + '">' +
+                            '<div class="playlist-thumb-play">\u25B6</div>' +
+                        '</div>' +
+                        '<div class="playlist-song-info">' +
+                            '<h3>' + song.title + '</h3>' +
+                            '<p>' + song.artist + (song.genre ? ' <span class="genre-tag">' + song.genre + '</span>' : '') + '</p>' +
+                        '</div>' +
+                        '<div class="playlist-date">' + dateStr + '</div>' +
+                        '<button class="playlist-remove" onclick="removeSong(' + song.id + ')" title="Remove">\u00D7</button>' +
+                    '</div>';
+                }).join('');
+
+            } catch (e) {
+                console.error('Failed to load playlist:', e);
+                document.getElementById('playlist-list').innerHTML =
+                    '<div class="loading">Failed to load. Is the server running?</div>';
+            }
+        }
+
+        function playInline(songId, youtubeId) {
+            var row = document.getElementById('playlist-row-' + songId);
+            if (!row) return;
+
+            // If same song is already playing, stop it
+            if (activePlayerId === songId) {
+                closePlayer();
+                return;
+            }
+
+            // Close any existing player
+            closePlayer();
+
+            // Create player wrapper after the row
+            var wrapper = document.createElement('div');
+            wrapper.className = 'playlist-player-wrapper';
+            wrapper.id = 'player-wrapper-' + songId;
+            var playerDiv = document.createElement('div');
+            playerDiv.id = 'playlist-yt-' + songId;
+            wrapper.appendChild(playerDiv);
+            row.after(wrapper);
+
+            activePlayerId = songId;
+            activePlayer = new YT.Player('playlist-yt-' + songId, {
+                height: '100%',
+                width: '100%',
+                videoId: youtubeId,
+                playerVars: {
+                    autoplay: 1,
+                    controls: 1,
+                    rel: 0,
+                    modestbranding: 1,
+                    playsinline: 1
+                }
+            });
+        }
+
+        function closePlayer() {
+            if (activePlayer && typeof activePlayer.destroy === 'function') {
+                activePlayer.destroy();
+            }
+            activePlayer = null;
+            if (activePlayerId) {
+                var wrapper = document.getElementById('player-wrapper-' + activePlayerId);
+                if (wrapper) wrapper.remove();
+            }
+            activePlayerId = null;
+        }
+
+        async function removeSong(songId) {
+            try {
+                closePlayer();
+                await fetch(API_URL + '/playlist/remove/' + songId, { method: 'DELETE' });
+                loadPlaylist();
+                showToast('Removed from playlist');
+            } catch (e) {
+                console.error('Failed to remove song:', e);
+            }
+        }
+
+        function showToast(message) {
+            var existing = document.querySelector('.toast');
+            if (existing) existing.remove();
+            var toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(function() {
+                toast.classList.add('dismiss');
+                setTimeout(function() {
+                    if (toast.parentNode) toast.remove();
+                }, 300);
+            }, 2000);
+        }
+
+        // YouTube connection
+        async function checkYouTubeStatus() {
+            try {
+                var res = await fetch(API_URL + '/youtube/status');
+                var data = await res.json();
+                if (data.connected) {
+                    document.getElementById('yt-disconnected').style.display = 'none';
+                    document.getElementById('yt-connected').style.display = 'flex';
+                } else {
+                    document.getElementById('yt-disconnected').style.display = 'flex';
+                    document.getElementById('yt-connected').style.display = 'none';
+                }
+            } catch (e) {
+                console.error('Failed to check YouTube status:', e);
+            }
+        }
+
+        async function syncAllToYouTube() {
+            var btn = document.querySelector('.yt-sync-btn');
+            btn.textContent = 'Syncing...';
+            btn.disabled = true;
+            try {
+                var res = await fetch(API_URL + '/playlist/sync-all', { method: 'POST' });
+                var data = await res.json();
+                if (data.success) {
+                    showToast('Synced ' + data.added + ' of ' + data.total + ' songs to YouTube');
+                } else {
+                    showToast('Sync failed');
+                }
+            } catch (e) {
+                showToast('Sync failed');
+            }
+            btn.textContent = 'Sync All to YouTube';
+            btn.disabled = false;
+        }
+
+        async function disconnectYouTube() {
+            try {
+                await fetch('/auth/youtube/disconnect', { method: 'POST' });
+                checkYouTubeStatus();
+                showToast('YouTube disconnected');
+            } catch (e) {
+                console.error('Failed to disconnect:', e);
+            }
+        }
+
+        // Check URL params for connection status
+        var params = new URLSearchParams(window.location.search);
+        if (params.get('youtube') === 'connected') {
+            showToast('YouTube connected!');
+            history.replaceState(null, '', '/playlist.html');
+        }
+        if (params.get('error')) {
+            showToast('YouTube connection failed');
+            history.replaceState(null, '', '/playlist.html');
+        }
+
+        loadPlaylist();
+        checkYouTubeStatus();
+    </script>
+
+    <!-- Matrix digital rain (fewer streams for readability) -->
+    <script>
+    (function() {
+        var canvas = document.getElementById('matrix-rain');
+        var ctx = canvas.getContext('2d');
+        var chars = '\u266a\u266b\u266c\u26690011\u266a\u266b01\u266c10\u2669'.split('');
+        var streams = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initStreams();
+        }
+
+        function initStreams() {
+            var count = window.innerWidth < 768 ? 5 : 8;
+            streams = [];
+            for (var i = 0; i < count; i++) {
+                streams.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height * -1,
+                    speed: 0.3 + Math.random() * 0.5,
+                    chars: [],
+                    length: 8 + Math.floor(Math.random() * 12),
+                    opacity: 0.06 + Math.random() * 0.08
+                });
+                for (var j = 0; j < streams[i].length; j++) {
+                    streams[i].chars.push(chars[Math.floor(Math.random() * chars.length)]);
+                }
+            }
+        }
+
+        function draw() {
+            ctx.fillStyle = 'rgba(10, 10, 10, 0.15)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.font = '14px "IBM Plex Mono", monospace';
+            streams.forEach(function(s) {
+                for (var i = 0; i < s.chars.length; i++) {
+                    var y = s.y + i * 22;
+                    ctx.fillStyle = i === s.chars.length - 1
+                        ? 'rgba(0, 255, 159, ' + Math.min(s.opacity * 2.5, 0.4) + ')'
+                        : 'rgba(0, 255, 159, ' + (s.opacity * (1 - i / s.chars.length)) + ')';
+                    ctx.fillText(s.chars[i], s.x, y);
+                    if (Math.random() < 0.02) s.chars[i] = chars[Math.floor(Math.random() * chars.length)];
+                }
+                s.y += s.speed;
+                if (s.y > canvas.height + 100) {
+                    s.y = -s.length * 22;
+                    s.x = Math.random() * canvas.width;
+                    s.speed = 0.3 + Math.random() * 0.5;
+                }
+            });
+            requestAnimationFrame(draw);
+        }
+
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            resize();
+            window.addEventListener('resize', resize);
+            draw();
+        }
+    })();
+    </script>
+</body>
+</html>

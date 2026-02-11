@@ -4,89 +4,259 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Music Battle</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <!-- User bar - Simple username only -->
-        <div class="user-bar" id="user-bar">
-            <div id="logged-out-view">
-                <button class="auth-btn primary" onclick="showUsernameModal()">Set Username</button>
-            </div>
-            <div id="logged-in-view" style="display: none;">
-                <span class="username">Playing as <strong id="display-username"></strong></span>
-                <button class="auth-btn" onclick="changeUsername()">Change</button>
-            </div>
-        </div>
+    <!-- Matrix background layers -->
+    <canvas class="matrix-rain" id="matrix-rain"></canvas>
+    <div class="scan-lines"></div>
 
-        <!-- Header -->
-        <header>
-            <h1>Music Battle</h1>
-            <p class="tagline">Pick your favorite. Discover new music.</p>
-        </header>
-
-        <!-- Battle arena -->
-        <div class="battle-arena">
-            <!-- Left song -->
-            <div class="song-card" id="song-left">
-                <div class="video-container">
-                    <div id="player-left"></div>
-                </div>
-                <div class="song-info">
-                    <h2 class="song-title">Loading...</h2>
-                    <p class="artist-name"></p>
-                </div>
-                <button class="vote-btn" onclick="vote('left')">
-                    This One Wins
-                </button>
+    <div class="window">
+        <!-- Title bar with traffic lights -->
+        <div class="title-bar">
+            <div class="traffic-lights">
+                <div class="traffic-light red"></div>
+                <div class="traffic-light yellow"></div>
+                <div class="traffic-light green"></div>
             </div>
-
-            <!-- VS divider -->
-            <div class="vs-divider">
-                <span>VS</span>
-            </div>
-
-            <!-- Right song -->
-            <div class="song-card" id="song-right">
-                <div class="video-container">
-                    <div id="player-right"></div>
-                </div>
-                <div class="song-info">
-                    <h2 class="song-title">Loading...</h2>
-                    <p class="artist-name"></p>
-                </div>
-                <button class="vote-btn" onclick="vote('right')">
-                    This One Wins
-                </button>
+            <div class="title-bar-text">Music Battle</div>
+            <div class="title-bar-user" id="title-bar-user">
+                <span id="logged-out-view">
+                    <button onclick="showUsernameModal()">Set Username</button>
+                </span>
+                <span id="logged-in-view" style="display: none;">
+                    <strong id="display-username"></strong>
+                    <button onclick="changeUsername()">Change</button>
+                </span>
             </div>
         </div>
 
-        <!-- Controls -->
-        <div class="controls">
-            <button class="play-btn" onclick="playBoth()">Play Both</button>
-            <button class="skip-btn" onclick="skip()">Skip Battle</button>
+        <!-- Menu bar -->
+        <div class="menu-bar">
+            <div class="menu-item">
+                File
+                <div class="menu-dropdown">
+                    <span onclick="loadNextBattle()">New Battle</span>
+                    <div class="menu-divider"></div>
+                    <a href="leaderboard.html">Leaderboard</a>
+                    <a href="playlist.html">My Playlist</a>
+                </div>
+            </div>
+            <div class="menu-item">
+                Edit
+                <div class="menu-dropdown">
+                    <span onclick="showUsernameModal()">Set Username...</span>
+                    <a href="playlist.html">Connected Accounts...</a>
+                </div>
+            </div>
+            <div class="menu-item">
+                View
+                <div class="menu-dropdown">
+                    <span onclick="playBoth()">Play Both</span>
+                    <span onclick="stopBoth()">Stop Both</span>
+                </div>
+            </div>
+            <div class="menu-item">
+                Help
+                <div class="menu-dropdown">
+                    <span>Pick your favorite song!</span>
+                    <div class="menu-divider"></div>
+                    <span>v1.0</span>
+                </div>
+            </div>
         </div>
 
-        <!-- Stats -->
-        <div class="score-display">
-            <p>Battles completed: <span id="battle-count">0</span></p>
-            <a href="leaderboard.html" class="leaderboard-link">View Leaderboard</a>
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <button class="toolbar-btn" onclick="loadNextBattle()">&#9876; Battle</button>
+            <button class="toolbar-btn" onclick="window.location.href='leaderboard.html'">&#9733; Rankings</button>
+            <button class="toolbar-btn" onclick="window.location.href='playlist.html'">&#9835; Playlist</button>
+            <div class="toolbar-divider"></div>
+            <button class="toolbar-btn" onclick="playBoth()">&#9654; Play Both</button>
+            <button class="toolbar-btn" onclick="skip()">&#9193; Skip</button>
+        </div>
+
+        <!-- Window body -->
+        <div class="window-body">
+            <!-- Old user bar (hidden by CSS, kept for script compatibility) -->
+            <div class="user-bar" id="user-bar"></div>
+
+            <!-- Battle arena -->
+            <div class="battle-arena">
+                <!-- Left song -->
+                <div class="song-card" id="song-left">
+                    <div class="video-container">
+                        <div id="player-left"></div>
+                    </div>
+                    <div class="song-info">
+                        <h2 class="song-title">Loading...</h2>
+                        <p class="artist-name"></p>
+                    </div>
+                    <button class="vote-btn" onclick="vote('left')">
+                        This One Wins
+                    </button>
+                </div>
+
+                <!-- VS divider -->
+                <div class="vs-divider">
+                    <span>VS</span>
+                </div>
+
+                <!-- Right song -->
+                <div class="song-card" id="song-right">
+                    <div class="video-container">
+                        <div id="player-right"></div>
+                    </div>
+                    <div class="song-info">
+                        <h2 class="song-title">Loading...</h2>
+                        <p class="artist-name"></p>
+                    </div>
+                    <button class="vote-btn" onclick="vote('right')">
+                        This One Wins
+                    </button>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="controls">
+                <button class="play-btn" onclick="playBoth()">Play Both</button>
+                <button class="skip-btn" onclick="skip()">Skip Battle</button>
+            </div>
+
+            <!-- Stats (hidden by CSS, kept for script compatibility) -->
+            <div class="score-display">
+                <p>Battles completed: <span id="battle-count">0</span></p>
+            </div>
+        </div>
+
+        <!-- Status bar -->
+        <div class="status-bar">
+            <span>Battles: <span id="footer-battle-count">0</span></span>
+            <a href="leaderboard.html">View Leaderboard &rarr;</a>
         </div>
     </div>
 
-    <!-- Simple Username Modal -->
+    <!-- Simple Username Modal (dark OS dialog style) -->
     <div class="modal-overlay" id="username-modal" style="display: none;">
         <div class="modal">
-            <button class="modal-close" onclick="hideUsernameModal()">&times;</button>
-            <h2>What's your name?</h2>
-            <p class="modal-subtitle">We'll track your music taste</p>
-            <input type="text" id="username-input" placeholder="Enter username" maxlength="20" />
-            <button class="modal-btn" onclick="saveUsername()">Start Battling</button>
+            <div class="modal-title-bar">
+                <div class="traffic-lights">
+                    <div class="traffic-light red"></div>
+                    <div class="traffic-light yellow"></div>
+                    <div class="traffic-light green"></div>
+                </div>
+                <div class="title-bar-text">Set Username</div>
+            </div>
+            <div class="modal-body">
+                <h2>What's your name?</h2>
+                <p class="modal-subtitle">We'll track your music taste</p>
+                <input type="text" id="username-input" placeholder="Enter username" maxlength="20" />
+                <div class="modal-actions">
+                    <button class="modal-btn secondary" onclick="hideUsernameModal()">Cancel</button>
+                    <button class="modal-btn primary" onclick="saveUsername()">OK</button>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- YouTube IFrame API -->
     <script src="https://www.youtube.com/iframe_api"></script>
     <script src="script.js"></script>
+
+    <!-- Matrix digital rain -->
+    <script>
+    (function() {
+        const canvas = document.getElementById('matrix-rain');
+        const ctx = canvas.getContext('2d');
+
+        // Music symbols + binary for that Matrix x Music mashup
+        const chars = '\u266a\u266b\u266c\u26690011\u266a\u266b01\u266c10\u2669';
+        const charArray = chars.split('');
+
+        let streams = [];
+        let columnWidth = 20;
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initStreams();
+        }
+
+        function initStreams() {
+            const isMobile = window.innerWidth < 768;
+            const streamCount = isMobile ? 10 : 18;
+            streams = [];
+
+            for (let i = 0; i < streamCount; i++) {
+                streams.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height * -1,
+                    speed: 0.3 + Math.random() * 0.7,  // Slow: 3-8 sec feel
+                    chars: [],
+                    length: 8 + Math.floor(Math.random() * 15),
+                    opacity: 0.08 + Math.random() * 0.12  // 8-20% opacity
+                });
+
+                // Pre-fill each stream with random chars
+                for (let j = 0; j < streams[i].length; j++) {
+                    streams[i].chars.push(charArray[Math.floor(Math.random() * charArray.length)]);
+                }
+            }
+        }
+
+        function draw() {
+            // Fade the canvas slightly each frame for trail effect
+            ctx.fillStyle = 'rgba(10, 10, 10, 0.15)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.font = '14px "IBM Plex Mono", monospace';
+
+            streams.forEach(function(stream) {
+                for (let i = 0; i < stream.chars.length; i++) {
+                    const y = stream.y + i * 22;
+
+                    // Head character is brightest
+                    if (i === stream.chars.length - 1) {
+                        ctx.fillStyle = 'rgba(0, 255, 159, ' + Math.min(stream.opacity * 2.5, 0.5) + ')';
+                    } else {
+                        // Trail fades out
+                        const fade = 1 - (i / stream.chars.length);
+                        ctx.fillStyle = 'rgba(0, 255, 159, ' + (stream.opacity * fade) + ')';
+                    }
+
+                    ctx.fillText(stream.chars[i], stream.x, y);
+
+                    // Randomly change chars for flicker effect
+                    if (Math.random() < 0.02) {
+                        stream.chars[i] = charArray[Math.floor(Math.random() * charArray.length)];
+                    }
+                }
+
+                // Move stream down
+                stream.y += stream.speed;
+
+                // Reset when off screen
+                if (stream.y > canvas.height + 100) {
+                    stream.y = -stream.length * 22;
+                    stream.x = Math.random() * canvas.width;
+                    stream.speed = 0.3 + Math.random() * 0.7;
+                }
+            });
+
+            requestAnimationFrame(draw);
+        }
+
+        // Respect prefers-reduced-motion
+        const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+        if (!prefersReduced.matches) {
+            resize();
+            window.addEventListener('resize', resize);
+            draw();
+        }
+    })();
+    </script>
 </body>
 </html>
