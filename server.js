@@ -198,12 +198,6 @@ var genreMap = {
   25: 'rnb'          // Earned It
 };
 
-// Apply genres (runs every startup to ensure they're set)
-var updateGenre = db.prepare("UPDATE songs SET genre = ? WHERE id = ? AND genre = 'untagged'");
-Object.keys(genreMap).forEach(function(id) {
-  updateGenre.run(genreMap[id], Number(id));
-});
-
 // Initial songs data - Verified working videos only
 const initialSongs = [
   // Pop Hits (verified)
@@ -253,6 +247,12 @@ if (songCount.count === 0) {
   });
   console.log('Database seeded with 25 songs!');
 }
+
+// Apply genres (runs every startup to ensure they're set — AFTER seed)
+var updateGenre = db.prepare("UPDATE songs SET genre = ? WHERE id = ? AND genre = 'untagged'");
+Object.keys(genreMap).forEach(function(id) {
+  updateGenre.run(genreMap[id], Number(id));
+});
 
 // ============================================
 // AUTH ROUTES
