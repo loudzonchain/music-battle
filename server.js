@@ -46,7 +46,9 @@ app.use(session({
 // DATABASE SETUP
 // ============================================
 
-const db = new Database('musicbattle.db');
+// Use Railway volume path in production for persistence across deploys
+const dbPath = process.env.NODE_ENV === 'production' ? '/app/data/musicbattle.db' : 'musicbattle.db';
+const db = new Database(dbPath);
 
 // Create tables
 db.exec(`

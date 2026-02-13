@@ -17,13 +17,32 @@
     <div class="window">
         <!-- Title bar with traffic lights -->
         <div class="title-bar">
+            <button class="hamburger-btn" onclick="toggleMobileMenu()" aria-label="Menu">&#9776;</button>
             <div class="traffic-lights">
                 <div class="traffic-light red"></div>
                 <div class="traffic-light yellow"></div>
                 <div class="traffic-light green"></div>
             </div>
-            <div class="title-bar-text">My Playlist - Music Battle</div>
+            <div class="title-bar-text">My Playlist</div>
         </div>
+
+        <!-- Mobile slide-out menu -->
+        <div class="mobile-menu-overlay" id="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
+        <nav class="mobile-menu" id="mobile-menu">
+            <div class="mobile-menu-header">
+                <span>Menu</span>
+                <button onclick="toggleMobileMenu()" aria-label="Close">&times;</button>
+            </div>
+            <div class="mobile-menu-section">
+                <a href="index.html" class="mobile-menu-link">&#9876; Battle</a>
+                <a href="leaderboard.html" class="mobile-menu-link">&#9733; Rankings</a>
+                <a href="playlist.html" class="mobile-menu-link active">&#9835; My Playlist</a>
+            </div>
+            <div class="mobile-menu-divider"></div>
+            <div class="mobile-menu-section">
+                <span class="mobile-menu-link" onclick="loadPlaylist(); toggleMobileMenu();">&#8634; Refresh Playlist</span>
+            </div>
+        </nav>
 
         <!-- Menu bar -->
         <div class="menu-bar">
@@ -91,6 +110,13 @@
             <a href="index.html">Back to Battle &rarr;</a>
         </div>
     </div>
+
+    <script>
+    function toggleMobileMenu() {
+        document.getElementById('mobile-menu').classList.toggle('open');
+        document.getElementById('mobile-menu-overlay').classList.toggle('open');
+    }
+    </script>
 
     <!-- YouTube IFrame API (for inline playback) -->
     <script src="https://www.youtube.com/iframe_api"></script>

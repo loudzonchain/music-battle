@@ -17,6 +17,7 @@
     <div class="window">
         <!-- Title bar with traffic lights -->
         <div class="title-bar">
+            <button class="hamburger-btn" onclick="toggleMobileMenu()" aria-label="Menu">&#9776;</button>
             <div class="traffic-lights">
                 <div class="traffic-light red"></div>
                 <div class="traffic-light yellow"></div>
@@ -33,6 +34,31 @@
                 </span>
             </div>
         </div>
+
+        <!-- Mobile slide-out menu -->
+        <div class="mobile-menu-overlay" id="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
+        <nav class="mobile-menu" id="mobile-menu">
+            <div class="mobile-menu-header">
+                <span>Menu</span>
+                <button onclick="toggleMobileMenu()" aria-label="Close">&times;</button>
+            </div>
+            <div class="mobile-menu-section">
+                <a href="index.html" class="mobile-menu-link active">&#9876; Battle</a>
+                <a href="leaderboard.html" class="mobile-menu-link">&#9733; Rankings</a>
+                <a href="playlist.html" class="mobile-menu-link">&#9835; My Playlist</a>
+            </div>
+            <div class="mobile-menu-divider"></div>
+            <div class="mobile-menu-section">
+                <span class="mobile-menu-link" onclick="playBoth(); toggleMobileMenu();">&#9654; Play Both</span>
+                <span class="mobile-menu-link" onclick="stopBoth(); toggleMobileMenu();">&#9632; Stop Both</span>
+                <span class="mobile-menu-link" onclick="skip(); toggleMobileMenu();">&#9193; Skip Battle</span>
+            </div>
+            <div class="mobile-menu-divider"></div>
+            <div class="mobile-menu-section">
+                <span class="mobile-menu-link" onclick="showUsernameModal(); toggleMobileMenu();">Set Username...</span>
+                <a href="playlist.html" class="mobile-menu-link">Connected Accounts...</a>
+            </div>
+        </nav>
 
         <!-- Menu bar -->
         <div class="menu-bar">
@@ -74,9 +100,9 @@
             <button class="toolbar-btn" onclick="loadNextBattle()">&#9876; Battle</button>
             <button class="toolbar-btn" onclick="window.location.href='leaderboard.html'">&#9733; Rankings</button>
             <button class="toolbar-btn" onclick="window.location.href='playlist.html'">&#9835; Playlist</button>
-            <div class="toolbar-divider"></div>
-            <button class="toolbar-btn" onclick="playBoth()">&#9654; Play Both</button>
-            <button class="toolbar-btn" onclick="skip()">&#9193; Skip</button>
+            <div class="toolbar-divider toolbar-action-only"></div>
+            <button class="toolbar-btn toolbar-action-only" onclick="playBoth()">&#9654; Play Both</button>
+            <button class="toolbar-btn toolbar-action-only" onclick="skip()">&#9193; Skip</button>
         </div>
 
         <!-- Window body -->
@@ -161,6 +187,14 @@
             </div>
         </div>
     </div>
+
+    <!-- Mobile menu toggle -->
+    <script>
+    function toggleMobileMenu() {
+        document.getElementById('mobile-menu').classList.toggle('open');
+        document.getElementById('mobile-menu-overlay').classList.toggle('open');
+    }
+    </script>
 
     <!-- YouTube IFrame API -->
     <script src="https://www.youtube.com/iframe_api"></script>
